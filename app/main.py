@@ -8,7 +8,7 @@ import asyncio
 app = FastAPI(title="Restaurant Management Backend")
 
 app.include_router(users_router, prefix="/users")
-app.include_router(auth_router, prefix="/auth") 
+app.include_router(auth_router) 
 
 async def init_models():
     async with engine.begin() as conn:
