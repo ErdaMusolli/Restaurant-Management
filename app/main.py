@@ -3,6 +3,7 @@ from app.database import engine, Base
 from app.users.router import router as users_router
 from app.auth.router import router as auth_router
 from app.restaurants.router import router as restaurants_router
+from app.orders import models as order_models
 
 import asyncio
 
