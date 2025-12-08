@@ -3,7 +3,8 @@ from app.database import engine, Base
 from app.users.router import router as users_router
 from app.auth.router import router as auth_router
 from app.restaurants.router import router as restaurants_router
-from app.orders import models as order_models
+from app.orders.router import router as orders_router
+
 
 import asyncio
 
@@ -13,6 +14,7 @@ app = FastAPI(title="Restaurant Management Backend")
 app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(auth_router)
 app.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"]) 
+app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 
 
 async def init_models():
