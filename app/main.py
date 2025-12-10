@@ -22,4 +22,14 @@ async def test_db():
             await conn.run_sync(lambda x: None)
         return {"status": "connected"}
     except Exception as e:
-        return {"status": "error", "details": str(e)}
+        return {"status": "error", "details": str(e)} 
+
+from menu.router import router as menu_router
+from dish.router import router as dish_router
+
+
+
+app.include_router(menu_router, prefix="/menus", tags=["Menus"])
+app.include_router(dish_router, prefix="/dishes", tags=["Dishes"])
+
+
