@@ -4,6 +4,9 @@ from app.users.router import router as users_router
 from app.auth.router import router as auth_router
 from app.restaurants.router import router as restaurants_router
 from app.orders.router import router as orders_router
+from app.menu.router import router as menu_router
+from app.dish.router import router as dish_router
+
 
 
 import asyncio
@@ -15,6 +18,9 @@ app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(auth_router)
 app.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"]) 
 app.include_router(orders_router, prefix="/orders", tags=["Orders"])
+app.include_router(menu_router)
+app.include_router(dish_router)
+
 
 
 async def init_models():
@@ -34,12 +40,7 @@ async def test_db():
     except Exception as e:
         return {"status": "error", "details": str(e)} 
 
-from menu.router import router as menu_router
-from dish.router import router as dish_router
 
 
-
-app.include_router(menu_router, prefix="/menus", tags=["Menus"])
-app.include_router(dish_router, prefix="/dishes", tags=["Dishes"])
 
 

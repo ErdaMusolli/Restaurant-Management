@@ -1,29 +1,32 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.dish import models, schemas
 
-def get_dish(db: Session, dish_id: int):
-    return db.query(models.Dish).filter(models.Dish.id == dish_id).first()
+async def get_dish(db: AsyncSession, dish_id: int):
+    result = await db.execute(select(models.Dish).where(models.Dish.id == dish_id))
+    return result.scalars().first()
 
-def get_dishes(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Dish).offset(skip).limit(limit).all()
+async def get_dishes(db: AsyncSession, skip: int = 0, limit: int = 100):
+    result = await db.execute(select(models.Dish).offset(skip).limit(limit))
+    return result.scalars().all()
 
-def create_dish(db: Session, dish: schemas.DishCreate):
+async def create_dish(db: AsyncSession, dish: schemas.DishCreate):
     new_dish = models.Dish(**dish.dict())
     db.add(new_dish)
-    db.commit()
-    db.refresh(new_dish)
+    await db.commit()
+    await db.refresh(new_dish)
     return new_dish
 
-def update_dish(db: Session, db_dish: models.Dish, updates: schemas.DishUpdate):
+async def update_dish(db: AsyncSession, db_dish: models.Dish, updates: schemas.DishUpdate):
     for key, value in updates.dict(exclude_unset=True).items():
         setattr(db_dish, key, value)
-    db.commit()
-    db.refresh(db_dish)
+    await db.commit()
+    await db.refresh(db_dish)
     return db_dish
 
-def delete_dish(db: Session, dish_id: int):
-    dish = db.query(models.Dish).filter(models.Dish.id == dish_id).first()
+async def delete_dish(db: AsyncSession, dish_id: int):
+    dish = await get_dish(db, dish_id)
     if dish:
-        db.delete(dish)
-        db.commit()
+        await db.delete(dish)
+        await db.commit()
     return dish

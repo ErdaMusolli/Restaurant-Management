@@ -1,30 +1,32 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.menu import models, schemas
 
-def get_menu(db: Session, menu_id: int):
-    return db.query(models.Menu).filter(models.Menu.id == menu_id).first()
+async def get_menus(db: AsyncSession, skip: int = 0, limit: int = 100):
+    result = await db.execute(select(models.Menu).offset(skip).limit(limit))
+    return result.scalars().all()
 
-def get_menus(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Menu).offset(skip).limit(limit).all()
+async def get_menu(db: AsyncSession, menu_id: int):
+    result = await db.execute(select(models.Menu).where(models.Menu.id == menu_id))
+    return result.scalars().first()
 
-def create_menu(db: Session, menu: schemas.MenuCreate):
+async def create_menu(db: AsyncSession, menu: schemas.MenuCreate):
     new_menu = models.Menu(**menu.dict())
     db.add(new_menu)
-    db.commit()
-    db.refresh(new_menu)
+    await db.commit()
+    await db.refresh(new_menu)
     return new_menu
 
-def update_menu(db: Session, db_menu: models.Menu, updates: schemas.MenuUpdate):
+async def update_menu(db: AsyncSession, db_menu: models.Menu, updates: schemas.MenuUpdate):
     for key, value in updates.dict(exclude_unset=True).items():
         setattr(db_menu, key, value)
-    db.commit()
-    db.refresh(db_menu)
+    await db.commit()
+    await db.refresh(db_menu)
     return db_menu
 
-def delete_menu(db: Session, menu_id: int):
-    menu = db.query(models.Menu).filter(models.Menu.id == menu_id).first()
+async def delete_menu(db: AsyncSession, menu_id: int):
+    menu = await get_menu(db, menu_id)
     if menu:
-        db.delete(menu)
-        db.commit()
+        await db.delete(menu)
+        await db.commit()
     return menu
-

@@ -4,12 +4,12 @@ from app.users.models import User
 from app.users.schemas import UserCreate, UserUpdate
 from app.utils.security import get_password_hash
 
-
 async def create_user(db: AsyncSession, user: UserCreate):
     db_user = User(
         email=user.email,
         full_name=user.full_name,
-        hashed_password=get_password_hash(user.password)
+        hashed_password=get_password_hash(user.password),
+        role=user.role or "user"
     )
     db.add(db_user)
     await db.commit()
@@ -19,7 +19,7 @@ async def create_user(db: AsyncSession, user: UserCreate):
 async def get_user_by_id(db: AsyncSession, user_id: int):
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalars().first()
-    
+
 async def get_user_by_email(db: AsyncSession, email: str):
     result = await db.execute(select(User).where(User.email == email))
     return result.scalars().first()

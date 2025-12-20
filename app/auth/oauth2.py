@@ -15,23 +15,24 @@ async def get_current_user(
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"}
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: str = payload.get("sub")
+
         if user_id is None:
             raise credentials_exception
+
     except JWTError:
         raise credentials_exception
 
-    user = await get_user_by_id(db, user_id)
+    user = await get_user_by_id(db, int(user_id))
     if not user:
         raise credentials_exception
 
     return user
-
 
 def require_role(role: str):
     async def role_checker(current_user = Depends(get_current_user)):
@@ -39,3 +40,4 @@ def require_role(role: str):
             raise HTTPException(status_code=403, detail="Not enough permissions")
         return current_user
     return role_checker
+
