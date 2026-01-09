@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from main import app  # <-- importi i saktë për projektin tënd
+from main import app 
 
 @pytest.mark.asyncio
 async def test_create_dish():

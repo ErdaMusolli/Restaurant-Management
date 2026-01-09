@@ -3,12 +3,16 @@ from sqlalchemy.future import select
 from .models import Order
 from .schemas import OrderCreate, OrderUpdate
 
-async def create_order(db: AsyncSession, order: OrderCreate):
+async def create_order(
+    db: AsyncSession,
+    order: OrderCreate,
+    user_id: int
+):
     db_order = Order(
-        user_id=order.user_id,
+        user_id=user_id,
         restaurant_id=order.restaurant_id,
         total_price=order.total_price,
-        status=order.status
+        status="Pending"
     )
     db.add(db_order)
     await db.commit()
