@@ -17,8 +17,10 @@ async def create_user(db: AsyncSession, user: UserCreate):
     return db_user
 
 async def get_user_by_id(db: AsyncSession, user_id: int):
-    result = await db.execute(select(User).where(User.id == user_id))
-    return result.scalars().first()
+    return await db.get(User, user_id)
+
+async def get_restaurant_by_id(db: AsyncSession, restaurant_id: int):
+    return await db.get(Restaurant, restaurant_id)
 
 async def get_user_by_email(db: AsyncSession, email: str):
     result = await db.execute(select(User).where(User.email == email))

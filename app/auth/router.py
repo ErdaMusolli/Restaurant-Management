@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from jose import jwt
 from app.restaurants import schemas
-from app.auth.oauth2 import require_role
+from app.auth.oauth2 import get_current_user, require_admin, require_manager
 from app.database import get_db
 from app.users.crud import get_user_by_email, get_user_by_id
 from .crud import create_refresh_token, get_refresh_token, delete_refresh_token

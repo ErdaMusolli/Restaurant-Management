@@ -6,6 +6,7 @@ from app.restaurants.router import router as restaurants_router
 from app.orders.router import router as orders_router
 from app.menu.router import router as menu_router
 from app.dish.router import router as dish_router
+from app.admin.router import router as admin_router
 
 
 
@@ -15,11 +16,13 @@ import asyncio
 app = FastAPI(title="Restaurant Management Backend")
 
 app.include_router(users_router, prefix="/users", tags=["Users"])
+app.include_router(admin_router) 
 app.include_router(auth_router)
 app.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"]) 
 app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 app.include_router(menu_router)
 app.include_router(dish_router)
+
 
 
 
