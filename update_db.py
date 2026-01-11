@@ -2,16 +2,16 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
 import asyncio
 
-DATABASE_URL = "postgresql+asyncpg://postgres:1234@localhost:5432/restaurant_db"
+DATABASE_URL = "postgresql+asyncpg://postgres:PythonProject@localhost:5432/restaurant_db"
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 async def add_restaurant_column():
     async with engine.begin() as conn:
-        # Shto kolonën nëse nuk ekziston
+      
         await conn.execute(
             text("ALTER TABLE users ADD COLUMN IF NOT EXISTS restaurant_id INTEGER;")
         )
-        # Shto foreign key **vetëm një herë** (pa IF NOT EXISTS)
+       
         try:
             await conn.execute(
                 text("""

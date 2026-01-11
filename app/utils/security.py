@@ -4,7 +4,7 @@ from jose import jwt
 from app.config import settings
 
 pwd_context = CryptContext(
-    schemes=["argon2"],
+    schemes=["bcrypt","argon2"],
     deprecated="auto"
 )
 
