@@ -15,7 +15,7 @@ jobs:
         image: postgres:15-alpine
         env:
           POSTGRES_USER: restaurant_user
-          POSTGRES_PASSWORD: PythonProject
+          POSTGRES_PASSWORD: 1234
           POSTGRES_DB: restaurant_db
         ports:
           - 5432:5432
@@ -37,21 +37,28 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+
+      - name: Wait for Postgres
+        run: |
+          # Shty testet deri sa DB të jetë ready
+          until pg_isready -h localhost -p 5432 -U restaurant_user; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql://restaurant_user:PythonProject@localhost:5432/restaurant_db
+          DATABASE_URL: postgresql://restaurant_user:1234@localhost:5432/restaurant_db
         run: |
           source venv/bin/activate
-          pytest
+          pytest -v --tb=short
 
       - name: Build Docker image
-        run: |
-          docker build -t restaurant_api:latest .
+        run: docker build -t restaurant_api:latest .
 
-      - name: Push to Docker Hub (optional)
+      - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           push: true
