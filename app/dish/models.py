@@ -5,10 +5,12 @@ from app.database import Base
 class Dish(Base):
     __tablename__ = "dishes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     price = Column(Float, nullable=False)
     menu_id = Column(Integer, ForeignKey("menus.id"))
+    restaurant_id = Column(Integer, ForeignKey("restaurants.id"))  
 
     menu = relationship("Menu", back_populates="dishes")
+    restaurant = relationship("Restaurant", back_populates="dishes")  

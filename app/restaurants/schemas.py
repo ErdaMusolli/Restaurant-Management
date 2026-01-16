@@ -23,3 +23,10 @@ class RestaurantUpdate(BaseModel):
     address: str | None = None
     contact_info: str | None = None
     opening_hours: str | None = None
+
+class RestaurantBasic(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attributes = True

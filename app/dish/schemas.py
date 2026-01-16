@@ -8,7 +8,7 @@ class DishBase(BaseModel):
     menu_id: int
 
 class DishCreate(DishBase):
-    pass
+    restaurant_id: int
 
 class DishUpdate(BaseModel):
     name: Optional[str] = None
@@ -17,6 +17,7 @@ class DishUpdate(BaseModel):
 
 class DishOut(DishBase):
     id: int
+    restaurant_id: int
 
     class Config:
         orm_mode = True

@@ -1,0 +1,58 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: restaurant_user
+          POSTGRES_PASSWORD: PythonProject
+          POSTGRES_DB: restaurant_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U restaurant_user -d restaurant_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://restaurant_user:PythonProject@localhost:5432/restaurant_db
+        run: |
+          source venv/bin/activate
+          pytest
+
+      - name: Build Docker image
+        run: |
+          docker build -t restaurant_api:latest .
+
+      - name: Push to Docker Hub (optional)
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: yourdockerhubusername/restaurant_api:latest

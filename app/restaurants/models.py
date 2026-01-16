@@ -14,10 +14,19 @@ class Restaurant(Base):
     menus = relationship(
         "Menu",
         back_populates="restaurant",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy="selectin"
     )
 
     managers = relationship(
         "User",
-        back_populates="restaurant"
+        back_populates="restaurant",
+        lazy="selectin"
+    )
+
+    dishes = relationship(
+        "Dish",
+        back_populates="restaurant",
+        cascade="all, delete-orphan",
+        lazy="selectin"
     )
